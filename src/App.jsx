@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid'
 import './App.css'
 import { AddTaskForm } from './AddTaskForm.jsx'
 import { TodoItem } from './TodoItem.jsx'
+import { Modal } from './Modal.jsx'
 
 const MY_INITIAL_TASK_LIST = [
   { id: 'todo-0', name: 'Eat', isComplete: true },
@@ -12,11 +13,13 @@ const MY_INITIAL_TASK_LIST = [
 
 function App() {
   const [taskList, setTaskList] = useState(MY_INITIAL_TASK_LIST)
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
 
   function addTask(name) {
     const newTask = { id: nanoid(), name, isComplete: false }
     const taskListClone = [...taskList, newTask]
     setTaskList(taskListClone)
+    setIsAddTaskModalOpen(false)
   }
 
   function toggleTaskCompleted(id) {
@@ -37,10 +40,26 @@ function App() {
 
   return (
     <main className="m-4 max-w-xl space-y-6">
-      <AddTaskForm onNewTask={addTask} />
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold text-slate-900">To do</h1>
+        <button
+          type="button"
+          className="rounded-md bg-sky-600 px-4 py-2 font-semibold text-white shadow-sm hover:bg-sky-700 active:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-300"
+          onClick={() => setIsAddTaskModalOpen(true)}
+        >
+          Add Task
+        </button>
+      </div>
+
+      <Modal
+        headerLabel="Add a task"
+        isOpen={isAddTaskModalOpen}
+        onCloseRequested={() => setIsAddTaskModalOpen(false)}
+      >
+        <AddTaskForm onNewTask={addTask} />
+      </Modal>
 
       <section className="space-y-3">
-        <h1 className="text-xl font-bold text-slate-900">To do</h1>
         <ul className="space-y-2">
           {taskList.map((task) => (
             <TodoItem
